@@ -157,6 +157,7 @@ If you do not have `conda` installed [instructions can be found here.](./docs/co
 
 ```bash
 conda create -f ./docs/environment.yml
+conda activate llvm
 ```
 
 

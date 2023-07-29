@@ -11,7 +11,7 @@
       "displayName": "Ubuntu Config",
       "description": "Ubuntu build using Ninja generator",
       "generator": "Unix Makefiles",
-      "binaryDir": "${sourceDir}/build",
+      "binaryDir": "${sourceDir}/build-make",
       "cacheVariables": {
          "CT_CLANG_INSTALL_DIR": "/usr/lib/llvm-16"
       },
@@ -26,12 +26,12 @@
       "displayName": "Mamba Config",
       "description": "Mamba build using Ninja generator",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build",
+      "binaryDir": "${sourceDir}/build-ninja",
       "cacheVariables": {
-         "CT_CLANG_INSTALL_DIR": "$penv{CONDA_PREFIX}/llvm"
+         "CT_CLANG_INSTALL_DIR": "$penv{CONDA_PREFIX}"
       },
       "environment": {
-        "CLANG_DIR": "$penv{CONDA_PREFIX}/llvm",
+        "CLANG_DIR": "$penv{CONDA_PREFIX}",
         "CLANG_TUTOR_DIR": "${sourceDir}"
       },
       "debug": { "output": false }
@@ -39,18 +39,36 @@
   ],
   "buildPresets": [
     {
-      "name": "hello",
+      "name": "hello-ubuntu",
       "configurePreset": "ubuntu",
+      "targets": "HelloWorld"
+    },
+    {
+      "name": "hello",
+      "configurePreset": "mamba",
       "targets": "HelloWorld"
     }
   ],
   "workflowPresets": [
     {
-      "name": "hello",
+      "name": "hello-ubuntu",
       "steps": [
         {
           "type": "configure",
           "name": "ubuntu"
+        },
+        {
+          "type": "build",
+          "name": "hello-ubuntu"
+        }
+      ]
+    },
+    {
+      "name": "hello",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "mamba"
         },
         {
           "type": "build",
