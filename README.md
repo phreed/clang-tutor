@@ -64,23 +64,34 @@ header files. This may lead to some surprising results!
 
 You can build and run **HelloWorld** like this:
 
+
+# Set some environment variables
 ```bash
-# Build the plugin
-export Clang_DIR=<installation/dir/of/clang/16>
-export CLANG_TUTOR_DIR=<source/dir/clang/tutor>
-mkdir build
-cd build
-cmake -DCT_Clang_INSTALL_DIR=$Clang_DIR $CLANG_TUTOR_DIR/HelloWorld/
-make
-# Run the plugin
-$Clang_DIR/bin/clang -cc1 -load ./libHelloWorld.{so|dylib} -plugin hello-world $CLANG_TUTOR_DIR/test/HelloWorld-basic.cpp
+export CLANG_DIR=<installation/dir/of/clang/16>
+export CLANG_TUTOR_DIR=<source/dir/clang-tutor>
+```
+e.g.
+```bash
+export CLANG_DIR=/usr/lib/llvm-16
+export CLANG_TUTOR_DIR=$(pwd)
+```
+
+# Build the plugin via cmake presets
+The `cmake` presets must be run from the project root directory.
+```bash
+cmake --workflow --preset hello
+```
+
+# Run the parser using the plugin
+```bash
+$CLANG_DIR/bin/clang -cc1 -load $CLANG_TUTOR_DIR/build/lib/libHelloWorld.* -plugin hello-world $CLANG_TUTOR_DIR/test/HelloWorld-basic.cpp
 ```
 
 You should see the following output:
 
-```
+```text
 # Expected output
-(clang-tutor) file: <source/dir/clang/tutor>/test/HelloWorld-basic.cpp
+(clang-tutor) file: <source/dir/clang-tutor>/test/HelloWorld-basic.cpp
 (clang-tutor)  count: 3
 ```
 
@@ -99,7 +110,7 @@ When running a Clang plugin on a C++ file that includes headers from STL, it is
 easier to run it with `clang++` (rather than `clang -cc1`) like this:
 
 ```bash
-$Clang_DIR/bin/clang++ -c -Xclang -load -Xclang libHelloWorld.dylib -Xclang -plugin -Xclang hello-world file.cpp
+$CLANG_DIR/bin/clang++ -c -Xclang -load -Xclang libHelloWorld.dylib -Xclang -plugin -Xclang hello-world file.cpp
 ```
 
 This way you can be confident that all the necessary include paths (required to
@@ -137,6 +148,17 @@ installing LLVM 16):
     LLVM tool for executing the tests)
   * [**FileCheck**](https://llvm.org/docs/CommandGuide/FileCheck.html) (LIT
     requirement, it's used to check whether tests generate the expected output)
+
+## Installing Clang 16 In a New Conda Environment
+With [`conda`](https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html)
+you can install Clang 16 and LLVM 16 on Windows, Linux, or MacOS.
+
+If you do not have `conda` installed [instructions can be found here.](./docs/conda.adoc)
+
+```bash
+conda create -f ./docs/environment.yml
+```
+
 
 ## Installing Clang 16 On Mac OS X
 On Darwin you can install Clang 16 and LLVM 16 with
@@ -199,11 +221,11 @@ Building & Testing
 You can build **clang-tutor** (and all the provided plugins) as follows:
 ```bash
 cd <build/dir>
-cmake -DCT_Clang_INSTALL_DIR=<installation/dir/of/clang/16> <source/dir/clang-tutor>
+cmake -DCT_CLANG_INSTALL_DIR=<installation/dir/of/clang/16> <source/dir/clang-tutor>
 make
 ```
 
-The `CT_Clang_INSTALL_DIR` variable should be set to the root of either the
+The `CT_CLANG_INSTALL_DIR` variable should be set to the root of either the
 installation or build directory of Clang 16. It is used to locate the
 corresponding `LLVMConfig.cmake` script that is used to set the include and
 library paths.
@@ -277,7 +299,7 @@ You can test **LACommenter** on the example presented above. Assuming that it
 was saved in `input_file.c`, you can add comments to it as follows:
 
 ```bash
-$Clang_DIR/bin/clang -cc1 -load <build_dir>/lib/libLACommenter.dylib -plugin LAC input_file.cpp
+$CLANG_DIR/bin/clang -cc1 -load <build_dir>/lib/libLACommenter.dylib -plugin LAC input_file.cpp
 ```
 
 ### Run the plugin through `ct-la-commenter`
@@ -338,7 +360,7 @@ The name of the class doesn't follow LLVM's coding guide and
 **CodeStyleChecker** indeed captures that:
 
 ```bash
-$Clang_DIR/bin/clang -cc1 -fcolor-diagnostics -load libCodeStyleChecker.dylib -plugin CSC file.cpp
+$CLANG_DIR/bin/clang -cc1 -fcolor-diagnostics -load libCodeStyleChecker.dylib -plugin CSC file.cpp
 file.cpp:2:7: warning: Type and variable names should start with upper-case letter
 class clangTutor_BadName;
       ^~~~~~~~~~~~~~~~~~~
@@ -403,7 +425,7 @@ int foo(int a, int b) {
 You can run the plugin like this:
 
 ```bash
-$Clang_DIR/bin/clang -cc1 -load <build_dir>/lib/libObfuscator.dylib -plugin Obfuscator input.cpp
+$CLANG_DIR/bin/clang -cc1 -load <build_dir>/lib/libObfuscator.dylib -plugin Obfuscator input.cpp
 ```
 
 You should see the following output on your screen.
@@ -498,7 +520,7 @@ examples (e.g.
 
 ### Run the plugin
 ```bash
-$Clang_DIR/bin/clang -cc1 -fcolor-diagnostics -load <build_dir>/lib/libUnusedForLoopVar.dylib -plugin UFLV input.cpp
+$CLANG_DIR/bin/clang -cc1 -fcolor-diagnostics -load <build_dir>/lib/libUnusedForLoopVar.dylib -plugin UFLV input.cpp
 ```
 
 ## CodeRefactor
@@ -559,7 +581,7 @@ powerful in this respect.
 plugin is  _a bit_ cumbersome and probably best demonstrated with an example:
 
 ```bash
-$Clang_DIR/bin/clang -cc1 -load <build_dir>/lib/libCodeRefactor.dylib -plugin CodeRefactor -plugin-arg-CodeRefactor -class-name -plugin-arg-CodeRefactor Base  -plugin-arg-CodeRefactor -old-name -plugin-arg-CodeRefactor foo  -plugin-arg-CodeRefactor -new-name -plugin-arg-CodeRefactor bar file.cpp
+$CLANG_DIR/bin/clang -cc1 -load <build_dir>/lib/libCodeRefactor.dylib -plugin CodeRefactor -plugin-arg-CodeRefactor -class-name -plugin-arg-CodeRefactor Base  -plugin-arg-CodeRefactor -old-name -plugin-arg-CodeRefactor foo  -plugin-arg-CodeRefactor -new-name -plugin-arg-CodeRefactor bar file.cpp
 ```
 
 It is much easier when you the plugin through a stand-alone tool like
@@ -592,11 +614,11 @@ documentation that I have found very helpful.
   ([video](https://www.youtube.com/watch?reload=9&v=8QvLVEaxzC8), [slides](https://s3.amazonaws.com/connect.linaro.org/yvr18/presentations/yvr18-223.pdf))
 * **Diagnostics**
   * _"Emitting Diagnostics in Clang"_, Peter Goldsborough ([blog
-  post](http://www.goldsborough.me/c++/clang/llvm/tools/2017/02/24/00-00-06-emitting_diagnostics_and_fixithints_in_clang_tools/))
+  post](http://www.goldsborough.me/c++/clang/llvm/tools/2017/02/24/00-00-06-emitting_diagnostics_and_fixithints_in_CLANG_tools/))
 * **Projects That Use Clang Plugins**
   * Mozilla: official documentation on [static analysis in Firefox](https://firefox-source-docs.mozilla.org/code-quality/static-analysis.html#build-time-static-analysis), custom [ASTMatchers](https://searchfox.org/mozilla-central/source/build/clang-plugin/CustomMatchers.h)
   * Chromium: official documentation on [using clang plugins](https://chromium.googlesource.com/chromium/src.git/+/master/docs/clang.md#using-plugins), in-tree [source code](https://chromium.googlesource.com/chromium/src/+/master/tools/clang/plugins/)
-  * LibreOffice: official documenation on [developing Clang plugins](https://wiki.documentfoundation.org/Development/Clang_plugins), in-tree [source code](https://github.com/LibreOffice/core/tree/master/compilerplugins/clang)
+  * LibreOffice: official documenation on [developing Clang plugins](https://wiki.documentfoundation.org/Development/CLANG_plugins), in-tree [source code](https://github.com/LibreOffice/core/tree/master/compilerplugins/clang)
 * **clang-query**
   * _"Exploring Clang Tooling Part 2: Examining the Clang AST with clang-query"_, Stephen Kelly, [blog post](https://devblogs.microsoft.com/cppblog/exploring-clang-tooling-part-2-examining-the-clang-ast-with-clang-query/)
   * _"The Future of AST-Matcher based Refactoring"_, Stephen Kelly, [video 1](https://www.youtube.com/watch?v=yqi8U8Q0h2g&t=1202s), [video 2](https://www.youtube.com/watch?v=38tYYrnfNrs), [blog post](https://steveire.wordpress.com/2019/04/30/the-future-of-ast-matching-refactoring-tools-eurollvm-and-accu/)

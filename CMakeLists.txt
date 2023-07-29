@@ -4,36 +4,36 @@ project(clang-tutor)
 #===============================================================================
 # 0. GET CLANG INSTALLATION DIR
 #===============================================================================
-# In clang-tutor, `CT_Clang_INSTALL_DIR` is the key CMake variable - it points
+# In clang-tutor, `CT_CLANG_INSTALL_DIR` is the key CMake variable - it points
 # to a Clang installation directory. For the sake of completeness,
-# <PackageName>_DIR (i.e. `Clang_DIR`) and <PackageName>_ROOT (i.e.
-# `Clang_ROOT`) are also supported. Visit CMake documentation for more details:
+# <PackageName>_DIR (i.e. `CLANG_DIR`) and <PackageName>_ROOT (i.e.
+# `CLANG_ROOT`) are also supported. Visit CMake documentation for more details:
 #   https://cmake.org/cmake/help/latest/command/find_package.html
 # Use only _one_ of these variables.
 
-if(DEFINED Clang_ROOT)
-  set(CT_CLANG_PACKAGE_DIR "${Clang_ROOT}/../../..")
-elseif(DEFINED Clang_DIR)
-  set(CT_CLANG_PACKAGE_DIR "${Clang_DIR}/../../..")
+if(DEFINED CLANG_ROOT)
+  set(CT_CLANG_PACKAGE_DIR "${CLANG_ROOT}/../../..")
+elseif(DEFINED CLANG_DIR)
+  set(CT_CLANG_PACKAGE_DIR "${CLANG_DIR}/../../..")
 endif()
 mark_as_advanced(CT_CLANG_PACKAGE_DIR)
 
 # Set this to a valid Clang installation directory. This is most likely where
 # LLVM is installed on your system.
-set(CT_Clang_INSTALL_DIR "${CT_CLANG_PACKAGE_DIR}" CACHE PATH
+set(CT_CLANG_INSTALL_DIR "${CT_CLANG_PACKAGE_DIR}" CACHE PATH
   "Clang installation directory")
 
 #===============================================================================
 # 1. VERIFY CLANG INSTALLATION DIR
 #===============================================================================
-set(CT_LLVM_INCLUDE_DIR "${CT_Clang_INSTALL_DIR}/include/llvm")
+set(CT_LLVM_INCLUDE_DIR "${CT_CLANG_INSTALL_DIR}/include/llvm")
 if(NOT EXISTS "${CT_LLVM_INCLUDE_DIR}")
 message(FATAL_ERROR
-  " CT_Clang_INSTALL_DIR (${CT_LLVM_INCLUDE_DIR}) is invalid.")
+  " CT_CLANG_INSTALL_DIR (${CT_LLVM_INCLUDE_DIR}) is invalid.")
 endif()
 
 set(CT_LLVM_CMAKE_FILE
-  "${CT_Clang_INSTALL_DIR}/lib/cmake/clang/ClangConfig.cmake")
+  "${CT_CLANG_INSTALL_DIR}/lib/cmake/clang/ClangConfig.cmake")
 if(NOT EXISTS "${CT_LLVM_CMAKE_FILE}")
 message(FATAL_ERROR
   " CT_LLVM_CMAKE_FILE (${CT_LLVM_CMAKE_FILE}) is invalid.")
@@ -44,7 +44,7 @@ endif()
 #    Extracted from:
 #    http://llvm.org/docs/CMake.html#embedding-llvm-in-your-project
 #===============================================================================
-list(APPEND CMAKE_PREFIX_PATH "${CT_Clang_INSTALL_DIR}/lib/cmake/clang/")
+list(APPEND CMAKE_PREFIX_PATH "${CT_CLANG_INSTALL_DIR}/lib/cmake/clang/")
 
 find_package(Clang REQUIRED CONFIG)
 
@@ -56,7 +56,7 @@ if(NOT "16" VERSION_EQUAL "${LLVM_VERSION_MAJOR}")
 endif()
 
 message(STATUS "Found Clang ${LLVM_PACKAGE_VERSION}")
-message(STATUS "Using ClangConfig.cmake in: ${CT_Clang_INSTALL_DIR}")
+message(STATUS "Using ClangConfig.cmake in: ${CT_CLANG_INSTALL_DIR}")
 
 message("CLANG STATUS:
   Includes (clang)    ${CLANG_INCLUDE_DIRS}

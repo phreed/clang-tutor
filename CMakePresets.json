@@ -3,28 +3,23 @@
   "cmakeMinimumRequired": {
     "major": 3,
     "minor": 27,
-    "patch": 0
+    "patch": 1
   },
   "configurePresets": [
     {
-      "name": "hello-ubuntu",
-      "displayName": "Hello World Config",
-      "description": "Hello World build using Ninja generator",
+      "name": "ubuntu",
+      "displayName": "Ubuntu Config",
+      "description": "Ubuntu build using Ninja generator",
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-         "CT_Clang_INSTALL_DIR": "/usr/lib/llvm-16"
+         "CT_CLANG_INSTALL_DIR": "/usr/lib/llvm-16"
       },
       "environment": {
-        "Clang_DIR": "/usr/lib/llvm-16",
+        "CLANG_DIR": "/usr/lib/llvm-16",
         "CLANG_TUTOR_DIR": "${sourceDir}"
       },
-      "vendor": {
-        "example.com/ExampleIDE/1.0": {
-          "autoFormat": true
-        }
-      },
-      "debug": { "output": true }
+      "debug": { "output": false }
     },
     {
       "name": "mamba",
@@ -33,25 +28,35 @@
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-         "CT_Clang_INSTALL_DIR": "$penv{CONDA_PREFIX}/llvm"
+         "CT_CLANG_INSTALL_DIR": "$penv{CONDA_PREFIX}/llvm"
       },
       "environment": {
-        "Clang_DIR": "$penv{CONDA_PREFIX}/llvm",
+        "CLANG_DIR": "$penv{CONDA_PREFIX}/llvm",
         "CLANG_TUTOR_DIR": "${sourceDir}"
       },
-      "vendor": {
-        "example.com/ExampleIDE/1.0": {
-          "autoFormat": true
-        }
-      },
-      "debug": { "output": true }
+      "debug": { "output": false }
     }
   ],
   "buildPresets": [
     {
       "name": "hello",
-      "configurePreset": "mamba",
+      "configurePreset": "ubuntu",
       "targets": "HelloWorld"
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "hello",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ubuntu"
+        },
+        {
+          "type": "build",
+          "name": "hello"
+        }
+      ]
     }
   ]
 }

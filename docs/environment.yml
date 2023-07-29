@@ -1,0 +1,35 @@
+# mamba create -f ~/Desktop/clang-tutor/docs/environment.yml
+
+name: llvm
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+
+# build tools
+- cmake
+- conan 
+- ninja
+# - vcpkg
+
+# https://github.com/conda-forge/clangdev-feedstock
+- clang
+- clang-format
+# - clang-format-16
+- clang-tools
+- clangdev
+# - clangxx
+- libclang
+- libclang-cpp
+# - libclang-cpp16
+# - libclang13
+# - python-clang
+
+# https://github.com/conda-forge/llvmdev-feedstock
+- libllvm16
+- lit
+- llvm
+- llvm-tools 
+- llvmdev
