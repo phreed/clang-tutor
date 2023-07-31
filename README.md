@@ -1,13 +1,15 @@
+
 clang-tutor
-=========
+===========
+
 [![Build Status](https://github.com/banach-space/clang-tutor/workflows/x86-Ubuntu/badge.svg?branch=main)](https://github.com/banach-space/clang-tutor/actions?query=workflow%3Ax86-Ubuntu+branch%3Amain)
 [![Build Status](https://github.com/banach-space/clang-tutor/workflows/x86-Darwin/badge.svg?branch=main)](https://github.com/banach-space/clang-tutor/actions?query=workflow%3Ax86-Darwin+branch%3Amain)
 
 
 Example Clang plugins for C and C++ - based on **Clang 16**
 
-**clang-tutor** is a collection of self-contained reference Clang plugins. It's a
-tutorial that targets novice and aspiring Clang developers. Key features:
+**clang-tutor** is a collection of self-contained reference Clang plugins. 
+It's a tutorial that targets novice and aspiring Clang developers. Key features:
 
   * **Modern** - based on the latest version of Clang (and updated with
     every release)
@@ -18,6 +20,7 @@ tutorial that targets novice and aspiring Clang developers. Key features:
 Corrections and feedback always welcome!
 
 ### Overview
+
 [Clang](https://clang.llvm.org/) (together with
 [LibTooling](https://clang.llvm.org/docs/LibTooling.html)) provides a very
 powerful API and infrastructure for analysing and modifying source files from
@@ -83,11 +86,23 @@ cmake --workflow --preset hello
 ```
 
 # Run the parser using the plugin
+
+## on Linux (and posix systems)
 ```bash
-$CLANG_DIR/bin/clang -cc1 -load $CLANG_TUTOR_DIR/build/lib/libHelloWorld.* -plugin hello-world $CLANG_TUTOR_DIR/test/HelloWorld-basic.cpp
+$CLANG_DIR/bin/clang -cc1 -load $CLANG_TUTOR_DIR/build-ninja/lib/libHelloWorld.so -plugin hello-world $CLANG_TUTOR_DIR/test/HelloWorld-basic.cpp
 ```
 
-You should see the following output:
+## on MacOS, iOS (Apple systems)
+```bash
+$CLANG_DIR/bin/clang -cc1 -load $CLANG_TUTOR_DIR/build-ninja/lib/libHelloWorld.dylib -plugin hello-world $CLANG_TUTOR_DIR/test/HelloWorld-basic.cpp
+```
+
+## on Win32 (Windows systems)
+```powershell
+$CLANG_DIR/bin/clang -cc1 -load $CLANG_TUTOR_DIR/build-ninja/lib/HelloWorld.dll -plugin hello-world $CLANG_TUTOR_DIR/test/HelloWorld-basic.cpp
+```
+
+# You should see the following output:
 
 ```text
 # Expected output
@@ -95,7 +110,7 @@ You should see the following output:
 (clang-tutor)  count: 3
 ```
 
-### How To Analyze STL Headers
+### How To Analyze STL Headers (note: the following examples assume MacOS)
 In order to see what happens with multiple _indirectly_ included header files,
 you can run **HelloWorld** on one of the header files from the [Standard
 Template Library](https://en.wikipedia.org/wiki/Standard_Template_Library). For
@@ -149,7 +164,7 @@ installing LLVM 16):
   * [**FileCheck**](https://llvm.org/docs/CommandGuide/FileCheck.html) (LIT
     requirement, it's used to check whether tests generate the expected output)
 
-## Installing Clang 16 In a New Conda Environment
+### Installing Clang 16 In a New Conda Environment
 With [`conda`](https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html)
 you can install Clang 16 and LLVM 16 on Windows, Linux, or MacOS.
 
@@ -158,10 +173,11 @@ If you do not have `conda` installed [instructions can be found here.](./docs/co
 ```bash
 conda create -f ./docs/environment.yml
 conda activate llvm
+cp ./docs/state $CONDA_PREFIX/conda_meta/state
 ```
 
 
-## Installing Clang 16 On Mac OS X
+### Installing Clang 16 On Mac OS X
 On Darwin you can install Clang 16 and LLVM 16 with
 [Homebrew](https://brew.sh/):
 
@@ -179,7 +195,7 @@ brew upgrade llvm
 Once the installation (or upgrade) is complete, all the required header files,
 libraries and tools will be located in `/usr/local/opt/llvm/`.
 
-## Installing Clang 16 On Ubuntu
+### Installing Clang 16 On Ubuntu
 On Ubuntu Jammy Jellyfish, you can [install modern
 LLVM](https://blog.kowalczyk.info/article/k/how-to-install-latest-clang-6.0-on-ubuntu-16.04-xenial-wsl.html)
 from the official [repository](http://apt.llvm.org/):
@@ -193,7 +209,7 @@ sudo apt-get install -y llvm-16 llvm-16-dev libllvm16 llvm-16-tools clang-16 lib
 This will install all the required header files, libraries and tools in
 `/usr/lib/llvm-16/`.
 
-## Building Clang 16 From Sources
+### Building Clang 16 From Sources
 Building from sources can be slow and tricky to debug. It is not necessary, but
 might be your preferred way of obtaining LLVM/Clang 16. The following steps
 will work on Linux and Mac OS X:
@@ -207,13 +223,14 @@ cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=host -DLLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi" <llvm-project/root/dir>/llvm/
 cmake --build .
 ```
+
 For more details read the [official
 documentation](https://llvm.org/docs/CMake.html).
 
 ### Note for macOS users
 As per this great
 [description](https://quuxplusone.github.io/blog/2019/11/09/llvm-from-scratch/)
-by Arthur O’Dwyer , add `-DDEFAULT_SYSROOT="$(xcrun --show-sdk-path)"` to your
+by Arthur O'Dwyer , add `-DDEFAULT_SYSROOT="$(xcrun --show-sdk-path)"` to your
 CMake invocation when building Clang from sources. Otherwise, `clang`  won't be
 able to find e.g. standard C headers (e.g.  `wchar.h`).
 
