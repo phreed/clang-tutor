@@ -2,7 +2,7 @@
 
 :description: This document describes how to set up a `conda` environment for `clang-tutor` development. 
 :sectanchors: 
-:url-repo: https://github.com/banach-space/clang-tutor
+:url-repo: https://github.com/banach-space/clang-tutor/docs/conda.adoc
 
 == Conda
 
