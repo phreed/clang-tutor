@@ -1,0 +1,20 @@
+{
+    "env": {
+        "CLANG_DIR": "/usr/lib/llvm-16",
+        "vscode_ref": "https://code.visualstudio.com/docs/cpp/c-cpp-properties-schema-reference"
+    },
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${CLANG_DIR}/**"
+            ],
+            "defines": [],
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}
